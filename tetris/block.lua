@@ -58,7 +58,7 @@ local triangle = {
     {2,0}
 }
 
-function block.newObject()
+function block.newBlock()
     local obj = {} 
     obj.x = 0
     obj.y = 300 

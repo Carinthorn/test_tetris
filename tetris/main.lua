@@ -1,7 +1,5 @@
 block = require("block")
 
-
-
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest") 
 
@@ -31,13 +29,17 @@ function love.load()
     canFlip = true --better be function ---> examine which condition it cant rotate
     flip = 1
     canMove = true
+    moveRight = true
+    moveLeft = true
 
     j_shaped = newObject("block1.png")  
     j_shaped.x = 96
     j_shaped.y = 32 
 
 
-    singleBlock = love.graphics.newImage("images/singleBlock.png")     
+    -- singleBlock = love.graphics.newImage("images/singleBlock.png")     
+    
+    fallBlock = block.newBlock()
     --Default shape
     theShape = {
         {0,0}, 
@@ -67,44 +69,54 @@ function love.update(dt)
         end
     end
     elapsed = elapsed + 1 
+
+    for i = 1, 4 do 
+        if theShape[i][2] >= 19 then 
+            canFlip = false
+            moveRight = false 
+            moveLeft = false
+        end
+
+    end 
+
 end
 
 --here!!!!!!! problem 
 function love.keypressed(key) 
-    if key == "down" then 
+    if key == "down" then  
         block.moveDown(3) -- move down level 1
     elseif key == "up" then  
-        -- block.generateNewBlock()  
-        rotation_count = rotation_count + 1 
-        block.rotate(rotation_count)
-        block.rotate(rotation_count)  
-        -- flip = flip + 1 
-        -- j_shaped.y = j_shaped.y - 32  
-        j_shaped.rotation = j_shaped.rotation + 90   
+        if canFlip then
+            rotation_count = rotation_count + 1 
+            block.rotate(rotation_count)
+            block.rotate(rotation_count)  
+        end
+        
     elseif key == "left" then
-        -- if j_shaped.x - 32 >= 32 then 
-        --     j_shaped.x = j_shaped.x - 32
-        -- end   
-        for i = 1, 4 do 
-            if theShape[i][1] > 0 then
-                theShape[i][1] = theShape[i][1] - 1 
-            else 
-                break
+        if moveLeft then  
+            for i = 1, 4 do 
+                if theShape[i][1] > 0 then
+                    theShape[i][1] = theShape[i][1] - 1 
+                else 
+                    break
+                end
+                    
             end
-             
         end
           
     elseif key == "right" then   
         -- if j_shaped.x + 64 < 352 then 
         --     j_shaped.x = j_shaped.x + 32
         -- end 
-        for i = 4, 1, -1 do
-            if theShape[i][1] < 9 then    
-                theShape[i][1] = theShape[i][1] + 1     
-            else 
-                break
-            end
-        end  
+        if moveLeft then  
+            for i = 4, 1, -1 do
+                if theShape[i][1] < 9 then    
+                    theShape[i][1] = theShape[i][1] + 1     
+                else 
+                    break
+                end
+            end  
+        end
     end
 end
 
@@ -166,22 +178,22 @@ end
 function love.draw()   
     love.graphics.setColor(1,1,1)
     for i = 1, gridHeight do   
-        for j = 1, gridWidth do 
-            local x  = (j - 1)* cellSize -- + 32 to add ขอบ
-            local y  = (i - 1)* cellSize
+        for j = 1, gridWidth do  
+            local x  = (j - 1)* cellSize + 32 --to add ขอบ
+            local y  = (i - 1)* cellSize + 32
             love.graphics.rectangle("line", x, y, cellSize, cellSize) -- draw rectangle for each cell
             if grid[i][j] == 1 then 
-                love.graphics.rectangle("fill", x, y, cellSize, cellSize) 
+                love.graphics.rectangle("fill", x, y, cellSize, cellSize)  
             end
         end
     end 
 
-    for i = 1, 4 do      
-        -- theShape = {{0,0},{1,0},{1,1},{2,0}} 
+    for i = 1, 4 do       
+        -- theShape = {{0,0},{1,0},{1,1},{2,0}}  
         -- theShape[i][0]*cellSize, theShape[i][1]*cellSize
-        love.graphics.setColor(r, g, b) 
+        love.graphics.setColor(r, g, b)  
         -- love.graphics.draw(singleBlock, theShape[i][1]*cellSize, theShape[i][2]*cellSize, cellSize, cellSize)
-        love.graphics.rectangle("fill",theShape[i][1]*cellSize, theShape[i][2]*cellSize, cellSize, cellSize) 
+        love.graphics.rectangle("fill",theShape[i][1]*cellSize + 32, theShape[i][2]*cellSize + 32, cellSize, cellSize) 
         -- love.graphics.draw(singleBlock, 100, 100)  
     end  
     -- drawImage(j_shaped) 
