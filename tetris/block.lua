@@ -1,10 +1,23 @@
 local block = {}
 local width
+local colors = {}
+local theX
+local theY
 r = 100
 g = 155
 b = 30
 rotate = 0
-
+-- local w = gridWidth/10
+ 
+for i = 1, 20 do
+    colors[i] = {}
+    for j = 1, 10 do
+        colors[i][j] = {}
+        for n = 1, 3 do
+            colors[i][j][n] = 1
+        end 
+    end
+end
 
 isActive = true
 local square = {
@@ -19,8 +32,6 @@ local left_L = {
     {1,0},
     {2,0},
     {0,-1}
-      
-    
 }
 
 local right_L = {
@@ -83,7 +94,9 @@ function block.drawImage(obj)
     love.graphics.draw(obj.image, obj.x, obj.y, obj.rotation, obj.xScale, obj.yScale, obj.xOrigin, obj.yOrigin)
 end 
 
-function block.generateNewBlock()
+
+
+function block.generateNewBlock() 
     if math.random(1,7) == 1 then
         theShape = square
         r = 155
@@ -112,6 +125,22 @@ function block.generateNewBlock()
     
     
 end
+
+function block.addShape(currentShape)
+    for i = 1, 4 do 
+        theX = currentShape[i][1]
+        theY = currentShape[i][2]
+        --write shape color
+        colors[theX][theY][1] =  0--currentShape.r
+        colors[theX][theY][2] =  0--currentShape.g
+        colors[theX][theY][3] =  0--urrentShape.b
+    end
+end
+
+function block.drawShape()
+    block.addShape(theShape)
+end
+
 
 --receive level as param
 function block.moveDown(moveDown)

@@ -4,6 +4,7 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest") 
 
     grid = {}
+    coloredGrid = {}
     cellSize = 32
     gridWidth = 10 --number of cells in x direction
     gridHeight = 20 --number of cells in y direction
@@ -11,6 +12,16 @@ function love.load()
         grid[i] = {}
         for j = 1, gridWidth do
             grid[i][j] = 0
+        end
+    end
+
+    for i = 1, gridHeight do
+        coloredGrid[i] = {}
+        for j = 1, gridWidth do
+            coloredGrid[i][j] = {}
+            for n = 1, 3 do
+                coloredGrid[i][j][n] = 0
+            end
         end
     end
 
@@ -32,9 +43,9 @@ function love.load()
     moveRight = true
     moveLeft = true
 
-    j_shaped = newObject("block1.png")  
-    j_shaped.x = 96
-    j_shaped.y = 32 
+    -- j_shaped = newObject("block1.png")  
+    -- j_shaped.x = 96
+    -- j_shaped.y = 32 
 
 
     -- singleBlock = love.graphics.newImage("images/singleBlock.png")     
@@ -70,11 +81,12 @@ function love.update(dt)
     end
     elapsed = elapsed + 1 
 
-    for i = 1, 4 do 
+    for i = 1, 4 do  
         if theShape[i][2] >= 19 then 
             canFlip = false
             moveRight = false 
-            moveLeft = false
+            moveLeft = false  
+            -- block.generateNewBlock()
         end
 
     end 
@@ -117,33 +129,13 @@ function love.keypressed(key)
                 end
             end  
         end
+    elseif key == "p" then
+        block.drawShape()
     end
 end
 
-function newObject(name)  
-    local obj = {}
-    obj.x = 0
-    obj.y = 0
-    obj.rotation = 0
-    obj.xScale = 1
-    obj.yScale = 1
-    obj.image = love.graphics.newImage(name)
-    -- obj.width = obj.image:getWidth() 
-    -- obj.height = obj.image:getHeight() 
-    -- obj.xOrgin = obj.width/2
-    -- obj.yOrgin = obj.heigth/2
-    obj.anchorX = 1
-    obj.anchorY = 1
-    obj.RotationCenter = {x = obj.x + 16, y = obj.y + 48}
-    obj.red = 1
-    obj.green = 1
-    obj.blue = 1
-    obj.alpha = 1  
 
-    return obj
-end
-
---problem bro :(
+--problem bro :( 
 function flipShape()
     if canFlip then
         if flip == 1 then
@@ -175,28 +167,45 @@ function drawImage(obj)
 end 
 
 
-function love.draw()   
-    love.graphics.setColor(1,1,1)
-    for i = 1, gridHeight do   
+function love.draw()    
+    love.graphics.setColor(1,1,1)  
+    for i = 1, gridHeight do    
         for j = 1, gridWidth do  
             local x  = (j - 1)* cellSize + 32 --to add ขอบ
             local y  = (i - 1)* cellSize + 32
             love.graphics.rectangle("line", x, y, cellSize, cellSize) -- draw rectangle for each cell
             if grid[i][j] == 1 then 
-                love.graphics.rectangle("fill", x, y, cellSize, cellSize)  
-            end
+                love.graphics.rectangle("fill", x, y, cellSize, cellSize)
+  
+            end 
         end
-    end 
+    end   
 
-    for i = 1, 4 do       
+    --draw stamped shape when reach bottom
+    for i = 1, gridHeight do   
+        for j = 1, gridWidth do  
+            for n = 1, 3 do 
+                r = coloredGrid[i][j][1]
+                g = coloredGrid[i][j][2]
+                b = coloredGrid[i][j][3]
+                grid.fill(r,g,b, coloredGrid[i][1],coloredGrid[i][2])
+                -- if coloredGrid[i][j][n] == 1 then
+                    -- love.graphics.rectangle("fill",coloredGrid[i][1]*cellSize + 32, coloredGrid[i][2]*cellSize + 32, cellSize, cellSize) 
+                -- end
+            end
+        end  
+    end
+
+    
+    --draw moving block
+    for i = 1, 4 do        
         -- theShape = {{0,0},{1,0},{1,1},{2,0}}  
-        -- theShape[i][0]*cellSize, theShape[i][1]*cellSize
-        love.graphics.setColor(r, g, b)  
-        -- love.graphics.draw(singleBlock, theShape[i][1]*cellSize, theShape[i][2]*cellSize, cellSize, cellSize)
         love.graphics.rectangle("fill",theShape[i][1]*cellSize + 32, theShape[i][2]*cellSize + 32, cellSize, cellSize) 
-        -- love.graphics.draw(singleBlock, 100, 100)  
     end  
     -- drawImage(j_shaped) 
+
+    
+
 end 
 
 -- randomshape() 
@@ -211,4 +220,4 @@ end
 -- ghostdraw()
 -- newgame()
 -- settable()
--- printthetable() 
+-- printthetable()  
