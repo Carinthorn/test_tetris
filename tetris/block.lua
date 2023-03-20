@@ -3,6 +3,7 @@ local width
 local colors = {}
 local theX
 local theY
+block.debugList = {}
 isActive = true
 r = 100
 g = 155
@@ -22,23 +23,24 @@ end
 
 isActive = true
 square = {
+    {0,1},
     {0,0},
     {1,0},
-    {0,1},
     {1,1}
 }
 
 left_L = { 
     {0,1},
+    {0,0},
     {1,1},
-    {2,1}, 
-    {0,0}
+    {2,1}
+    
 }
 
 right_L = {
-    {0,0}, 
-    {1,0}, 
-    {2,0}, 
+    {0,1}, 
+    {1,1},  
+    {2,0},  
     {2,1}
 }
 
@@ -50,17 +52,17 @@ line = {
 }
 
 right_s = {
-    {0,0}, 
-    {1,0}, 
-    {1,1}, 
-    {2,1}
-}
-
-left_s = {
     {0,1}, 
     {1,0}, 
     {1,1}, 
     {2,0}
+}
+
+left_s = {
+    {1,1}, 
+    {1,0}, 
+    {0,0}, 
+    {2,1}
 }
 
 triangle = {
@@ -90,6 +92,25 @@ function block.newBlock(name, x, y)
     return obj
 end
 
+function block.newImage(name, x, y, xScale, yScale)
+    local obj = {} 
+    obj.x = x 
+    obj.y = y 
+    obj.rotation = 0
+    obj.xScale = xScale
+    obj.yScale = yScale
+    obj.image = love.graphics.newImage(name)
+    obj.width = 32
+    obj.height = 32
+    -- obj.xOrigin = obj.x 
+    -- obj.yOrigin = obj.y
+    obj.red = 1
+    obj.green = 1
+    obj.blue = 1
+    obj.alpha = 1 
+
+    return obj
+end
 
 --after
 
@@ -146,20 +167,29 @@ function block.generateNewBlock()
     local shape = {}
     if choice == 1 then
         shape = square
+        displayBlock = block.newImage("blocks/square.png", 370, 120, 0.6, 0.6)
     elseif choice == 2 then
         shape =  left_L
+        displayBlock = block.newImage("blocks/left_l.png", 370, 120, 0.6, 0.6)
     elseif choice == 3 then
         shape =  right_L
+        displayBlock = block.newImage("blocks/right_l.png", 370, 120, 0.6, 0.6)
+
     elseif choice == 4 then
         shape = line
-        
+        displayBlock = block.newImage("blocks/line.png", 370, 120, 0.6, 0.6)
+
     elseif choice == 5 then
         shape = right_s
-        
+        displayBlock = block.newImage("blocks/r_s.png", 390, 70, 0.6, 0.6)
+
     elseif choice == 6 then
         shape = left_s
+        displayBlock = block.newImage("blocks/l_s.png", 370, 120, 0.6, 0.61)
     elseif choice == 7 then
         shape = triangle
+        displayBlock = block.newImage("blocks/tri.png", 370, 120, 0.6, 0.6)
+
     end 
 
     return shape
@@ -341,6 +371,22 @@ end
 -- function block.isCollided()
 
 -- end
+
+function block.addLog(text)
+    block.debugList[#block.debugList + 1] = text
+    if #block.debugList > 4 then
+      table.remove(block.debugList, 1) 
+    end
+end 
+
+
+function block.drawLog()
+    love.graphics.setColor(1,1,1,1)
+    for index = 1, #block.debugList, 1 do
+        local debugText = block.debugList[index] 
+        love.graphics.print(debugText, 0, 20*(index-1))
+    end
+end
 
 
 return block 

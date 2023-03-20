@@ -59,6 +59,7 @@ function love.load()
     canMove = true
     moveRight = true
     moveLeft = true
+    
 
 
 

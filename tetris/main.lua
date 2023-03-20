@@ -12,49 +12,44 @@ function love.load()
     cellSize = 32 
     gridWidth = 10 --number of cells in x direction
     gridHeight = 20 --number of cells in y direction 
+    gridPic = love.graphics.newImage("frame.png")
     for i = 1, gridHeight do
         grid[i] = {}
         for j = 1, gridWidth do 
-            grid[i][j] = 0
+            grid[i][j] = 0 
         end
     end
 
-    for i = 1, 20 do
+    for i = 1, gridHeight do
         coloredGrid[i] = {}
-        for j = 1, 10 do
+        for j = 1, gridWidth do
             coloredGrid[i][j] = 0
         end
     end
  
-    -- theShape = { 
-    --     {0,-2},  
-    -- {1,-2},  
-    -- {1,-3},  
-    -- {2,-2} 
-    -- }
-    -- theShape = { 
-    --     {1,-1}, 
-    --     {1,0},  
-    --     {2,0},  
-    --     {3,0}
-    -- }    
-
-    --default shape
-    theShape = {  
-        {0,-1}, 
-        {0,0},  
-        {1,0}, 
-        {2,0}
-    } 
+   nextPic = love.graphics.newImage("next.png")
+   levelPic = love.graphics.newImage("level.png")
+    
+    theShape = { 
+        {0,1}, 
+    {1,1},  
+    {2,0},  
+    {2,1}
+    }
+ 
     original_shape = theShape 
-
+ 
     rotatedShape = {} 
     rotation_count = 0
 
-
+ 
     --block 
     blockImgList = {}
-    deadBlock = {}
+
+    --for experiment 
+    displayBlock = block.newImage("blocks/right_l.png", 370, 120, 0.6, 0.6)  
+    deadBlockImgList = {}
+    isActive = true
 
 
     --temporary 
@@ -63,6 +58,7 @@ function love.load()
     for i = 1, 4 do 
         newBlockImg = block.newBlock("images/singleBlock.png", theShape[i][1],theShape[i][2]) 
         blockImgList[#blockImgList+1] = newBlockImg
+        deadBlockImgList[#deadBlockImgList+1] = newBlockImg
     end  
    
     fall = true 
@@ -74,6 +70,9 @@ function love.load()
     canMove = true
     moveRight = true
     moveLeft = true
+    count = 4 
+
+    
  
 end
 
@@ -81,41 +80,65 @@ function love.update(dt)
     -- checkBottom(theShape) 
     --add image to shape
     --before
-    if fall then
+    
+    if fall and isActive then
         if elapsed >= 60 then 
             elapsed = 0    
             block.moveDown(1) 
-        end
+        end 
     end
     elapsed = elapsed + 1  
 
+     --Before
+    -- for i = 4, 1, -1 do   
+    --     if theShape[i][2] >= 19  then    
+    --         -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
+    --         coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
+    --         count  = count - 1
+    --         isActive = false
+             
+    --         if count == 1 then  
+    --             isActive = true    
+    --             canFlip = false   
+    --             moveRight = false     
+    --             moveLeft = false   
+    --             count = 4   
+    --             fall = false  
+    --         end 
+              
+    --     end
+    -- end    
     
-    for i = 1, 4 do   
-        if theShape[i][2] >= 19 then  
-            canFlip = false
-            moveRight = false 
-            moveLeft = false   
-            isActive = false 
-            fall = false 
-        
+    --After
  
-            -- important
-            -- grid[theShape[i][2]][theShape[i][1]] = 1 
-            coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
+    if theShape[1][2]  >= 19  then    
+        isActive = false 
+ 
+        for i = 1, 4 do     
+        -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
+            coloredGrid[theShape[i][2]][theShape[i][1]] = 1  
+        end 
+
+        canFlip = false   
+        moveRight = false     
+        moveLeft = false    
+        fall = false  
             
-        end
-    end 
+    end
+  
  
     if fall == false then
         theShape = block.generateNewBlock()
         original_shape = theShape 
-        fall = true
+        fall = true 
         canFlip = true 
         moveRight = true 
         moveLeft = true  
         isActive = true  
 
-    end 
+    end
+ 
+    
     
 
     --plot block
@@ -162,7 +185,7 @@ function love.update(dt)
     --         blockImg.y = theShape[n][2]
     --     end
     -- end  
-end
+end  
 
 --here!!!!!!! problem  
 function love.keypressed(key)  
@@ -174,7 +197,7 @@ function love.keypressed(key)
             rotation_count = rotation_count + 1 
             block.rotate(rotation_count)  
             block.rotate(rotation_count)    
-
+ 
             --after
             -- rotatedShape = block.rotate(theShape, rotation_count)
             -- rotatedShape = block.rotate(theShape, rotation_count)
@@ -246,11 +269,11 @@ function writeShape(shape)
         theX = shape[i][1]
         theY = shape[i][2]
         love.graphics.rectangle("fill",(theX*cellSize), (theY*cellSize), cellSize, cellSize)
-    end  
+    end   
 end
 
 
---tem
+--tem 
 function drawShape(shape)
     for i = 1, gridHeight do
         for j = 1, gridWidth do
@@ -269,38 +292,54 @@ function love.draw()
     -- drawShape(theShape) 
     
     --draw moving block 
+
+    -- drawShape(theShape)  
+    love.graphics.draw(gridPic, 12,14) 
+    love.graphics.draw(nextPic, 370,43)
+    love.graphics.draw(levelPic, 370,225) 
+    block.drawImage(displayBlock)
+ 
     for i = #blockImgList, 1, -1 do 
         blockImg = blockImgList[i] 
-        block.drawImage(blockImg)
+        block.drawImage(blockImg) 
     end 
-     
-    -- for n = 1, gridHeight do
-    --     for m = 1, gridWidth do 
-    --         if grid[n][m] == 1 then
-    --             drawShape(theShape)
-    --             -- love.graphics.draw(img, n, m)       
-    --         end
-    --     end  
-    -- end
 
-    drawShape(theShape) 
+    for i = #blockImgList, 1, -1 do 
+        blockImg = blockImgList[i] 
+        block.drawImage(blockImg) 
+    end
+
     
-     
-  
+    for n = 1, gridHeight do 
+        for m = 1, gridWidth do 
+            if coloredGrid[n][m] == 1 then
+                -- drawShape(theShape)   
+                -- love.graphics.draw(img, n, m) 
+                for i = #deadBlockImgList, 1, -1 do    
+                    block.addLog(#deadBlockImgList)
+                    deadBlockImg = deadBlockImgList[i] 
+                    deadBlockImg.x = (m+1) * cellSize 
+                    deadBlockImg.y = (n+1) * cellSize  
+                    block.drawImage(deadBlockImg)
+                end         
+            end
+        end   
+    end
+
     --draw stamped shape when reach bottom
-    -- writeShape(theShape)    
+    -- writeShape(theShape)      
     for i = 1, gridHeight do   
         for j = 1, gridWidth do  
             local x  = (j - 1)* cellSize + 32 --to add ขอบ
             local y  = (i - 1)* cellSize + 32  
             
-            love.graphics.rectangle("line",x, y, cellSize, cellSize)  
-                -- love.graphics.rectangle("fill",theShape[i][1]*cellSize + 32, theShape[i][2]*cellSize + 32, cellSize, cellSize) 
-                -- grid.fill(r,g,b, coloredGrid[i][1],coloredGrid[i][2])
-                -- if coloredGrid[i][j][n] == 1 then
-                    -- love.graphics.rectangle("fill",coloredGrid[i][1]*cellSize + 32, coloredGrid[i][2]*cellSize + 32, cellSize, cellSize) 
-                -- end 
-        end   
-    end  
+            -- love.graphics.rectangle("line",x, y, cellSize, cellSize)  
+        
+        end    
+    end     
+    -- love.graphics.draw(img, 10, 20)   
+
+    
+       
 end  
 
