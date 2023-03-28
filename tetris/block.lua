@@ -239,11 +239,26 @@ end
 
 
 --before
-function block.moveDown(moveDown)
+-- function block.moveDown(moveDown) 
+--     for i = 1,4 do  
+--         -- moveDown > 19
+--         if moveDown > (19 - theShape[i][2]) then   
+--             theShape[i][2] = theShape[i][2] + (19 - theShape[i][2])
+--             break   
+--         else 
+--             theShape[i][2] = theShape[i][2] + moveDown  
+--         end 
+        
+--     end
+-- end
+
+--after 
+function block.moveDown(moveDown) 
     for i = 1,4 do  
+        -- moveDown > 19
         if moveDown > (19 - theShape[i][2]) then   
             theShape[i][2] = theShape[i][2] + (19 - theShape[i][2])
-            break   
+            -- break   
         else 
             theShape[i][2] = theShape[i][2] + moveDown  
         end 
@@ -251,6 +266,17 @@ function block.moveDown(moveDown)
     end
 end
 
+
+
+function block.canMoveDown(block)
+    for n = 1, gridHeight do   
+        for m = 1, gridWidth do 
+            if grid[n][m] == 1 then 
+
+            end
+        end
+    end 
+end
 --after
 -- function block.moveDown(obj, moveDown)
 --     if moveDown > (19 - obj.y) then   
@@ -368,9 +394,13 @@ end
 
 
 
--- function block.isCollided()
+function block.checkCollided(bg)
+    for i = 1, 4 do 
+        x = theShape[i][1]
+        y = theShape[i][2]
+    end 
 
--- end
+end
 
 function block.addLog(text)
     block.debugList[#block.debugList + 1] = text
@@ -387,6 +417,7 @@ function block.drawLog()
         love.graphics.print(debugText, 0, 20*(index-1))
     end
 end
+
 
 
 return block 
