@@ -1,4 +1,8 @@
 --check point = draw shape when it reach the bottom aka change grid value to 1 
+--line185
+--problem: 
+-- Randomization: bug when generate 8th block
+--press down = break the shape 
 
 block = require("block")
 -- grid = require("grid")
@@ -8,24 +12,24 @@ function love.load()
     grid = {}
     gridX = 0
     gridY = 0
-    coloredGrid = {}
+    coloredGrid = {} 
     cellSize = 32 
     gridWidth = 10 --number of cells in x direction
     gridHeight = 20 --number of cells in y direction 
     gridPic = love.graphics.newImage("frame.png")
     for i = 1, gridHeight do
         grid[i] = {}
-        for j = 1, gridWidth do 
+        for j = 1, gridWidth do  
             grid[i][j] = 0 
         end
     end
 
     for i = 1, gridHeight do
         coloredGrid[i] = {}
-        for j = 1, gridWidth do
-            coloredGrid[i][j] = 0
+        for j = 1, gridWidth do 
+            coloredGrid[i][j] = 0 
         end
-    end
+    end 
  
    nextPic = love.graphics.newImage("next.png")
    levelPic = love.graphics.newImage("level.png")
@@ -36,6 +40,13 @@ function love.load()
     {2,0},  
     {2,1}
     }
+    -- theShape = { 
+    --     {-1,1}, 
+    -- {0,1},   
+    -- {1,0},  
+    -- {1,1}
+    -- }
+ 
  
     original_shape = theShape 
  
@@ -70,6 +81,7 @@ function love.load()
     canMove = true
     moveRight = true
     moveLeft = true
+    fallFast = true
     count = 4 
 
     
@@ -80,14 +92,14 @@ function love.update(dt)
     -- checkBottom(theShape) 
     --add image to shape
     --before
-    
+      
     if fall and isActive then
         if elapsed >= 60 then 
             elapsed = 0    
             block.moveDown(1) 
-        end 
+        end  
     end
-    elapsed = elapsed + 1  
+    elapsed = elapsed + 1   
 
      --Before
     -- for i = 4, 1, -1 do   
@@ -110,23 +122,48 @@ function love.update(dt)
     -- end    
     
     --After
+    -- if theShape[1][2]  >= 19  then    
+    --     isActive = false 
  
-    if theShape[1][2]  >= 19  then    
-        isActive = false 
- 
-        for i = 1, 4 do     
-        -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
-            coloredGrid[theShape[i][2]][theShape[i][1]] = 1  
-        end 
+    --     for i = 1, 4 do     
+    --     -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
+    --         coloredGrid[theShape[i][2]][theShape[i][1]] = 1  
+    --     end 
 
-        canFlip = false   
-        moveRight = false     
-        moveLeft = false    
-        fall = false  
+    --     canFlip = false   
+    --     moveRight = false     
+    --     moveLeft = false    
+    --     fall = false  
             
-    end
+    -- end
+
+    --new 
+
+   
+    -- just deleeted
+    -- for k = 1, 4 do
+    --     if theShape[k][2] >= 19  then       
+    --         isActive = false  
+        
+    --         for i = 1, 4 do     
+    --         -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
+    --             coloredGrid[theShape[i][2]][theShape[i][1]] = 1  
+    --             grid[theShape[i][2]][theShape[i][1]] = 1  
   
+    --         end  
+     
+    --         canFlip = false   
+    --         moveRight = false     
+    --         moveLeft = false      
+    --         fall = false   
+                
+    --     end
  
+       
+ 
+    -- end
+
+    
     if fall == false then
         theShape = block.generateNewBlock()
         original_shape = theShape 
@@ -137,9 +174,6 @@ function love.update(dt)
         isActive = true  
 
     end
- 
-    
-    
 
     --plot block
     for i = 1, 4 do 
@@ -164,10 +198,6 @@ function love.update(dt)
     --     end
     -- end
     -- elapsed = elapsed + 1  
- 
-    
- 
-    
 
     --important
     -- if isActive == false then
@@ -185,12 +215,98 @@ function love.update(dt)
     --         blockImg.y = theShape[n][2]
     --     end
     -- end  
-end  
+
+    --colliding code
+    -- for n = 1, gridHeight do   
+    --     for m = 1, gridWidth do  
+    --         if coloredGrid[n][m] == 1 then 
+    --             for k = 1, 4 do
+    --                 if theShape[k][2] == n  then    
+    --                     isActive = false  
+                  
+    --                     for i = 1, 4 do     
+    --                     -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
+    --                         coloredGrid[theShape[i][2]][theShape[i][1]] = 1  
+    --                     end 
+                
+    --                     canFlip = false   
+    --                     moveRight = false     
+    --                     moveLeft = false       
+    --                     fall = false  
+                             
+    --                 end  
+
+    --             end 
+    --         end
+    --     end 
+    -- end  
+
+    for n = 1, gridHeight do       
+        for m = 1, gridWidth do     
+            if coloredGrid[n][m] == 1 then    
+                for k = 1, 4 do  
+                    --unable to press 
+                    if theShape[k][2]+3 == n   then     
+                        fallFast = false 
+                    else 
+                        fallFast = true  
+                    end 
+
+                    if theShape[k][2]+1 == n and theShape[k][1] == m and coloredGrid[theShape[k][2]+1][m] == 1 then    
+                    -- if coloredGrid[theShape[k][2]+1][m] == 1 and coloredGrid[theShape[k][2]+2][m] == 1 then    
+  
+                        isActive = false  
+                        
+                        for i = 1, 4 do      
+                        -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
+                            coloredGrid[theShape[i][2]][theShape[i][1]] = 1  
+                        end  
+                 
+                        canFlip = false    
+                        moveRight = false      
+                        moveLeft = false        
+                        fall = false  
+                                
+                    
+                    end
+                end
+            else  
+                for k = 1, 4 do
+                    if theShape[k][2] >= 19  then       
+                        isActive = false  
+                    
+                        for i = 1, 4 do     
+                        -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
+                            coloredGrid[theShape[i][2]][theShape[i][1]] = 1  
+                            grid[theShape[i][2]][theShape[i][1]] = 1  
+                        end  
+                 
+                        canFlip = false   
+                        moveRight = false     
+                        moveLeft = false      
+                        fall = false    
+                            
+                    end
+                end
+            end 
+        end
+    end
+    fallFast = true 
+end
+   
 
 --here!!!!!!! problem  
 function love.keypressed(key)  
-    if key == "s" then   
-        block.moveDown(3) -- move down level 1
+    if key == "s" then    
+        if fallFast then 
+            block.moveDown(3) 
+        end
+        -- for i = 1, 4 do 
+        --     if theShape[i][2] + 3 <= 19 then 
+        --         block.moveDown(3) 
+        --     end
+        -- end  
+         -- move down level 1
     elseif key == "w" then  
         if canFlip then
             --before
@@ -214,30 +330,33 @@ function love.keypressed(key)
         
     elseif key == "a" then
         if moveLeft then  
+            moveRight =true
             for i = 1, 4 do 
-                if theShape[i][1] > 0 then
+                if theShape[i][1] >= 1 then
                     theShape[i][1] = theShape[i][1] - 1 
                 else 
-                    break
-                end
-                    
+                    moveLeft = false 
+                    break 
+                end 
             end
         end
-          
+           
     elseif key == "d" then   
-        if moveLeft then   
+        if moveRight then   
+            moveLeft = true 
             for i = 4, 1, -1 do
                 if theShape[i][1] < 9 then    
                     theShape[i][1] = theShape[i][1] + 1     
                 else 
+                    moveRight =false  
                     break
                 end
-            end  
-        end
+            end   
+        end 
     end  
 end
  
-
+ --11, 9
 
 
 function drawImage(obj)  
@@ -248,7 +367,7 @@ end
 --here
 function checkBottom(shape)
     if(shape.isActive == false) then 
-        writeShape(shape)
+        writeShape(shape) 
         onDeckShape = block.generateNewBlock()
         shape = onDeckShape 
         shape.isActive = true
@@ -304,10 +423,10 @@ function love.draw()
         block.drawImage(blockImg) 
     end 
 
-    for i = #blockImgList, 1, -1 do 
-        blockImg = blockImgList[i] 
-        block.drawImage(blockImg) 
-    end
+    -- for i = #blockImgList, 1, -1 do 
+    --     blockImg = blockImgList[i] 
+    --     block.drawImage(blockImg) 
+    -- end
 
     
     for n = 1, gridHeight do 
@@ -317,7 +436,10 @@ function love.draw()
                 -- love.graphics.draw(img, n, m) 
                 for i = #deadBlockImgList, 1, -1 do    
                     block.addLog(#deadBlockImgList)
-                    deadBlockImg = deadBlockImgList[i] 
+                    deadBlockImg = deadBlockImgList[i]
+                    -- if n == 19 then 
+                    --     deadBlockImg.x = (m) * cellSize 
+                    -- end   
                     deadBlockImg.x = (m+1) * cellSize 
                     deadBlockImg.y = (n+1) * cellSize  
                     block.drawImage(deadBlockImg)
@@ -327,7 +449,7 @@ function love.draw()
     end
 
     --draw stamped shape when reach bottom
-    -- writeShape(theShape)      
+    -- writeShape(theShape)       
     for i = 1, gridHeight do   
         for j = 1, gridWidth do  
             local x  = (j - 1)* cellSize + 32 --to add ขอบ
@@ -335,7 +457,7 @@ function love.draw()
             
             -- love.graphics.rectangle("line",x, y, cellSize, cellSize)  
         
-        end    
+        end     
     end     
     -- love.graphics.draw(img, 10, 20)   
 
