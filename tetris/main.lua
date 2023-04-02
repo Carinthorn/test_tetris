@@ -32,7 +32,7 @@ function love.load()
     gridPic = love.graphics.newImage("frame.png")
     for i = 1, gridHeight do
         grid[i] = {}
-        for j = 1, gridWidth do   
+        for j = 1, gridWidth do    
             grid[i][j] = 0 
         end
     end 
@@ -81,12 +81,14 @@ function love.load()
     --temporary 
     img = love.graphics.newImage("images/singleBlock.png")
 
+    --before
     for i = 1, 4 do 
         newBlockImg = block.newBlock("images/singleBlock.png", theShape[i][1],theShape[i][2]) 
         newBlockImg2 = block.newBlock("images/singleBlock.png", theShape[i][1],theShape[i][2]) 
         blockImgList[#blockImgList+1] = newBlockImg
         deadBlockImgList[#deadBlockImgList+1] = newBlockImg2 
     end  
+
    
     fall = true  
     elapsed = 0
@@ -119,13 +121,13 @@ function love.update(dt)
      
     
     if fall == false then
-        theShape = block.generateNewBlock()
-        for i = 1, 4 do 
-            newBlockImg = block.newBlock("images/singleBlock.png", theShape[i][1],theShape[i][2]) 
-            deadBlockImgList[#deadBlockImgList+1] = newBlockImg
-            blockImgList[#blockImgList+1] = newBlockImg 
+        --added
+        -- for i = 1, 4 do 
+        --     newBlockImg = block.newBlock("images/singleBlock.png", theShape[i][1],theShape[i][2]) 
+        --     deadBlockImgList[#deadBlockImgList+1] = newBlockImg
+        -- end  
 
-        end 
+        theShape = block.generateNewBlock()
  
         original_shape = theShape  
         fall = true  
@@ -139,7 +141,7 @@ function love.update(dt)
     --plot block
     for i = 1, 4 do  
         blockImg =  blockImgList[i] 
-        blockImg.x = theShape[i][1] * 32 + 32
+        blockImg.x = theShape[i][1] * 32 + 32 
         blockImg.y = theShape[i][2] * 32 + 32
     end  
 
@@ -149,9 +151,11 @@ function love.update(dt)
     for n = 1, gridHeight do       
         for m = 1, gridWidth do     
             if coloredGrid[n][m] == 1 then    
+               
+
                 for k = 1, 4 do  
                     --unable to press 
-                    if theShape[k][2]+3 == n   then     
+                    if theShape[k][2]+3 == n then     
                         fallFast = false 
                     else  
                         fallFast = true  
@@ -163,25 +167,23 @@ function love.update(dt)
                         isActive = false  
                         
                         for i = 1, 4 do      
-                        -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
                             coloredGrid[theShape[i][2]][theShape[i][1]] = 1  
                         end  
                  
                         canFlip = false    
                         moveRight = false      
                         moveLeft = false        
-                        fall = false  
-                                
+                        fall = false
+ 
                     
                     end
                 end  
             else   
                 for k = 1, 4 do
-                    if theShape[k][2] >= 19  then       
+                    if theShape[k][2] >= 19  then        
                         isActive = false  
-                    
+                        
                         for i = 1, 4 do     
-                        -- coloredGrid[theShape[i][2]][theShape[i][1]] = 1 
                             coloredGrid[theShape[i][2]][theShape[i][1]] = 1  
                             grid[theShape[i][2]][theShape[i][1]] = 1  
                         end  
@@ -190,26 +192,27 @@ function love.update(dt)
                         moveRight = false     
                         moveLeft = false      
                         fall = false    
-                            
+
+                        --after
                     end
                 end
             end 
-        end
+        end 
     end
 
     fallFast = true 
   
     for n = 1, gridHeight do   
         if block.isLineOne(n) then
-            -- block.clearLine(n) 
-            text = "found one line " .. n 
+            block.clearLine(n) 
+            -- text = "found one line " .. n 
         end   
 
     end
 end 
    
 
---here!!!!!!! problem  
+--here!!!!!!! problem   
 function love.keypressed(key)  
     if key == "s" then     
         if fallFast then  
@@ -223,7 +226,6 @@ function love.keypressed(key)
         --             for i = 1, 4 do 
         --                 if theShape[i][1] == m then 
         --                     block.moveDown(n - theShape[i][2])   
-
         --                 else  
         --                     block.moveDown(17)   
         --                 end 
@@ -320,11 +322,7 @@ end
 
  
 function love.draw()   
-    -- drawShape(theShape) 
     
-    --draw moving block 
-
-    -- drawShape(theShape)
     --weird 
     love.graphics.setColor(1, 1, 1, 1)  
 
@@ -338,58 +336,50 @@ function love.draw()
         block.drawImage(blockImg) 
     end 
 
-    -- for i = #blockImgList, 1, -1 do 
-    --     blockImg = blockImgList[i] 
-    --     block.drawImage(blockImg) 
-    -- end
 
-     
     --way of drawing deadblock
-    --way one 
     for n = 1, gridHeight do 
         for m = -1, gridWidth do 
             if coloredGrid[n][m] == 1 then 
                 for i = #deadBlockImgList, 1, -1 do  
                 -- for i = 1, 4 do   
-                    block.addLog(#deadBlockImgList)
                     deadBlockImg = deadBlockImgList[i]
-                    deadBlockImg.x = (m+1) * cellSize 
+                    deadBlockImg.x = (m+1) * cellSize  
                     deadBlockImg.y = (n+1) * cellSize   
                     block.drawImage(deadBlockImg)
                 end         
             end
         end   
-    end
+    end 
 
     -- alternative 
     -- for n = 1, gridHeight do 
-    --     for m = -1, gridWidth do 
+    --     for m = -1, gridWidth do  
     --         if coloredGrid[n][m] == 1 then 
-    --             local x = (m+1) * cellSize 
-    --             local y = (n+1) * cellSize  
-    --             love.graphics.draw(blockPic, x, y)
-    --         end 
+    --             for i = #deadBlockImgList, 1, -1 do 
+    --                 deadBlockImg = deadBlockImgList[i] 
+    --                 block.drawImage(deadBlockImg)
+    --             end 
+    --         end  
     --     end 
     -- end 
 
 
     --draw stamped shape when reach bottom
-    -- writeShape(theShape)       
     for i = 1, gridHeight do   
-        for j = 1, gridWidth do   
+        for j = 1, gridWidth do    
             local x  = (j - 1)* cellSize + 32 --to add ขอบ
             local y  = (i - 1)* cellSize + 32  
-            
-            -- love.graphics.rectangle("line",x, y, cellSize, cellSize)  
-        
-        end     
+                    
+        end      
     end     
 
-    -- love.graphics.print(#deadBlockImgList, 10, 20) 
+    love.graphics.print(#deadBlockImgList, 10, 20)  
     -- love.graphics.print(text, 10, 20)  
-    for i = #deadBlockImgList, 1, -1 do    
-        deadBlock = deadBlockImgList[i]
-        love.graphics.print(deadBlock.y/32, 10, 20*i)  
+    for i = #deadBlockImgList, 1, -1 do     
+        deadBlock = deadBlockImgList[i] 
+        love.graphics.print(deadBlock.x/32, 10, 30*i)   
+        love.graphics.print(deadBlock.y/32, 20, 30*i) 
     end 
      
        

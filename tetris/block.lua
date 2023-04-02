@@ -332,13 +332,15 @@ function block.isLineOne(row)
 end
 
 function block.clearLine(row) 
-    for i = #deadBlockImgList, 1, -1 do    
-        deadBlock = deadBlockImgList[i]
-        width = deadBlock.x/cellSize
-        if coloredGrid[row][width] == 1 then 
-            deadBlock.alpha = 0 
-        end 
-    end 
+    -- for i = #deadBlockImgList, 1, -1 do    
+    --     deadBlock = deadBlockImgList[i]
+    --     width = deadBlock.x/cellSize
+    --     if coloredGrid[row][width] == 1 then 
+    --         deadBlock.alpha = 0 
+    --     end 
+    -- end 
+
+
 
 end
 
